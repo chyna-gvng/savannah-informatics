@@ -6,3 +6,6 @@ __pycache__
 
 # venv
 savannah-env
+
+# gcp account key
+service_account_key.json
