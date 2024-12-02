@@ -12,4 +12,4 @@
 ## Airflow Config:
 - ``airflow db init``
 - ``airflow users create --username admin --firstname Savannah --lastname Informatics --role Admin --email admin@savannah.com --password admin``
-- ``airflow webserver -p 8080``
+- ``airflow standalone``
