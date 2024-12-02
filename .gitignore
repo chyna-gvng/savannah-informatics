@@ -9,3 +9,6 @@ savannah-env
 
 # gcp account key
 service_account_key.json
+
+# airflow
+.airflow
