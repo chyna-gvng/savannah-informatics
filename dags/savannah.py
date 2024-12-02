@@ -19,7 +19,7 @@ default_args = {
 }
 
 dag = DAG(
-    'data_pipeline_dag',
+    'savannah_dag',
     default_args=default_args,
     description='End-to-end data pipeline',
     schedule_interval=None,
