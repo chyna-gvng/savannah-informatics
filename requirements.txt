@@ -1,4 +1,6 @@
 apache-airflow
-python-dotenv
+apache-airflow-providers-google
 requests
 pandas
+google-cloud-bigquery
+python-dotenv
