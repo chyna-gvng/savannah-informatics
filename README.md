@@ -1,4 +1,4 @@
 # Savannah Informatics
 ## Stack:
-- Apache Airflow(Python)
+- Python (Apache Airflow)
 - Google BigQuery
