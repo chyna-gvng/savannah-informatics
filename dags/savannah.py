@@ -10,7 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from scripts.extract_api_data import main as extract_data
 from scripts.clean_transform_data import main as clean_data
 from scripts.load_data import main as load_data
-from scripts.run_queries_bq import main as run_queries
+from scripts.generate_insights_bq import main as run_queries
 
 default_args = {
     'owner': 'airflow',
