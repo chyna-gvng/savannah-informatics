@@ -6,6 +6,9 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 def main():
+    """
+    Main function to execute SQL queries to generate insights in BigQuery.
+    """
     load_dotenv()
 
     credentials_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')

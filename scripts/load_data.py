@@ -1,48 +1,36 @@
 import os
-from dotenv import load_dotenv
 from google.cloud import bigquery
-import pandas as pd
+from dotenv import load_dotenv
 import logging
-from config.config import PROCESSED_DIR
 
 logging.basicConfig(level=logging.INFO)
 
-load_dotenv()
-
-def load_to_bigquery(table_id: str, file_path: str, client: bigquery.Client) -> None:
-    """
-    Load a DataFrame from a CSV file into a BigQuery table.
-
-    Parameters:
-    table_id (str): The ID of the BigQuery table.
-    file_path (str): The path to the CSV file.
-    client (bigquery.Client): The BigQuery client.
-    """
-    try:
-        df = pd.read_csv(file_path)
-        job = client.load_table_from_dataframe(df, table_id)
-        job.result()
-        logging.info(f"Data loaded into {table_id}")
-    except Exception as e:
-        logging.error(f"Error loading data into {table_id}: {e}")
-
 def main():
-    if 'GOOGLE_APPLICATION_CREDENTIALS' not in os.environ:
-        raise ValueError("Credentials not set.")
+    """
+    Main function to execute SQL queries to generate insights in BigQuery.
+    """
+    load_dotenv()
 
-    credentials_path = os.environ['GOOGLE_APPLICATION_CREDENTIALS']
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials_path
+    credentials_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+    project_id = os.getenv('GCP_PROJECT_ID')
+    if not credentials_path or not project_id:
+        raise ValueError("Missing required environment variables.")
 
     client = bigquery.Client.from_service_account_json(credentials_path)
 
-    datasets = ['users_table', 'products_table', 'carts_table']
-    files = ['users.csv', 'products.csv', 'carts.csv']
-    project_id = os.environ['GCP_PROJECT_ID']
-    dataset_id = os.environ['BQ_DATASET']
+    sql_file_path = os.path.join(os.path.dirname(__file__), '../sql/generate_insights.sql')
+    with open(sql_file_path, 'r') as sql_file:
+        queries = sql_file.read().split(';')
 
-    for ds, file in zip(datasets, files):
-        table_id = f'{project_id}.{dataset_id}.{ds}'
-        load_to_bigquery(table_id, f'{PROCESSED_DIR}/{file}', client)
+    for query in queries:
+        if query.strip():
+            try:
+                logging.info(f"Executing query: {query}")
+                job = client.query(query)
+                job.result()
+                logging.info(f"Query completed successfully.")
+            except Exception as e:
+                logging.error(f"Error executing query: {e}")
 
 if __name__ == '__main__':
     main()

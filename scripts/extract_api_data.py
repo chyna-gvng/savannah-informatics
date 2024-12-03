@@ -26,6 +26,9 @@ def fetch_data(api_url, file_path):
         logging.error(f"Error fetching data from {api_url}: {e}")
 
 def main():
+    """
+    Main function to fetch data from multiple APIs and save them to files.
+    """
     apis = {
         'users': 'https://dummyjson.com/users',
         'products': 'https://dummyjson.com/products',

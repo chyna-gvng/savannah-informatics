@@ -102,6 +102,9 @@ def save_data(df: pd.DataFrame, file_path: str) -> None:
     logging.info(f"Data saved to {file_path}")
 
 def main():
+    """
+    Main function to clean and transform data from raw JSON files.
+    """
     raw_users_file = f'{RAW_DIR}/users.json'
     raw_products_file = f'{RAW_DIR}/products.json'
     raw_carts_file = f'{RAW_DIR}/carts.json'
