@@ -14,7 +14,7 @@ This repository contains the implementation of a data pipeline for Savannah Info
 ## Directory Structure
 
 ```
-project/
+savannah-informatics/
 │
 ├── dags/
 │   └── savannah.py
