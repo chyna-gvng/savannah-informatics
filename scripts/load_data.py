@@ -11,7 +11,7 @@ load_dotenv()
 
 def load_to_bigquery(table_id: str, file_path: str, client: bigquery.Client) -> None:
     """
-    Load a DataFrame from a CSV file into a BigQuery table.
+    Load a DataFrame from a CSV file into a BigQuery table using WRITE_APPEND.
 
     Parameters:
     table_id (str): The ID of the BigQuery table.
@@ -19,8 +19,18 @@ def load_to_bigquery(table_id: str, file_path: str, client: bigquery.Client) -> 
     client (bigquery.Client): The BigQuery client.
     """
     try:
+        # Read the CSV file
         df = pd.read_csv(file_path)
-        job = client.load_table_from_dataframe(df, table_id)
+        
+        # Configure the job to append new data
+        job_config = bigquery.LoadJobConfig(
+            write_disposition=bigquery.WriteDisposition.WRITE_APPEND
+        )
+        
+        # Load the data, appending to the existing table
+        job = client.load_table_from_dataframe(
+            df, table_id, job_config=job_config
+        )
         job.result()
         logging.info(f"Data loaded into {table_id}")
     except Exception as e:

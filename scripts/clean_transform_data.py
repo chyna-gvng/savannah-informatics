@@ -3,6 +3,7 @@ import json
 import logging
 from config.config import RAW_DIR, PROCESSED_DIR
 from typing import Dict, Any
+from datetime import datetime
 
 logging.basicConfig(level=logging.INFO)
 
@@ -45,7 +46,11 @@ def clean_users(data: Dict[str, Any]) -> pd.DataFrame:
         'address.city': 'city',
         'address.postalCode': 'postal_code'
     }, inplace=True)
-    return users[['user_id', 'first_name', 'last_name', 'gender', 'age', 'street', 'city', 'postal_code']]
+    
+    # Add timestamp column
+    users['ingestion_timestamp'] = datetime.now().isoformat()
+    
+    return users[['user_id', 'first_name', 'last_name', 'gender', 'age', 'street', 'city', 'postal_code', 'ingestion_timestamp']]
 
 def clean_products(data: Dict[str, Any]) -> pd.DataFrame:
     """
@@ -63,7 +68,11 @@ def clean_products(data: Dict[str, Any]) -> pd.DataFrame:
         'id': 'product_id',
         'title': 'name'
     }, inplace=True)
-    return products[['product_id', 'name', 'category', 'brand', 'price']]
+    
+    # Add timestamp column
+    products['ingestion_timestamp'] = datetime.now().isoformat()
+    
+    return products[['product_id', 'name', 'category', 'brand', 'price', 'ingestion_timestamp']]
 
 def clean_carts(data: Dict[str, Any]) -> pd.DataFrame:
     """
@@ -77,6 +86,7 @@ def clean_carts(data: Dict[str, Any]) -> pd.DataFrame:
     """
     # Create a list to store expanded cart data
     expanded_carts = []
+    ingestion_timestamp = datetime.now().isoformat()
 
     for cart in data.get('carts', []):
         cart_id = cart['id']
@@ -92,7 +102,8 @@ def clean_carts(data: Dict[str, Any]) -> pd.DataFrame:
                 'quantity': product['quantity'],
                 'price': product['price'],
                 'total': product['total'],
-                'total_cart_value': total_cart_value
+                'total_cart_value': total_cart_value,
+                'ingestion_timestamp': ingestion_timestamp
             }
             expanded_carts.append(expanded_cart_entry)
 
@@ -100,7 +111,7 @@ def clean_carts(data: Dict[str, Any]) -> pd.DataFrame:
     carts_df = pd.DataFrame(expanded_carts)
     
     return carts_df[['cart_id', 'user_id', 'product_id', 'product_name', 
-                     'quantity', 'price', 'total', 'total_cart_value']]
+                     'quantity', 'price', 'total', 'total_cart_value', 'ingestion_timestamp']]
 
 def save_data(df: pd.DataFrame, file_path: str) -> None:
     """
