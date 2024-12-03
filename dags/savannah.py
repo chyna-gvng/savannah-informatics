@@ -2,7 +2,6 @@ import sys
 import os
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.operators.bash import BashOperator
 from datetime import datetime
 
 # Add the project directory to the Python path
@@ -11,6 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from scripts.extract_api_data import main as extract_data
 from scripts.clean_transform_data import main as clean_data
 from scripts.load_data import main as load_data
+from scripts.run_queries_bq import main as run_queries
 
 default_args = {
     'owner': 'airflow',
@@ -43,9 +43,9 @@ task_load = PythonOperator(
     dag=dag,
 )
 
-task_run_queries = BashOperator(
+task_run_queries = PythonOperator(
     task_id='run_bigquery_queries',
-    bash_command='bq query --use_legacy_sql=false < sql/generate_insights.sql',
+    python_callable=run_queries,
     dag=dag,
 )
 
