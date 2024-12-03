@@ -1,97 +1,129 @@
 import pandas as pd
 import json
+import logging
+from config.config import RAW_DIR, PROCESSED_DIR
+from typing import Dict, Any
 
-# Load raw data
-def load_json(file_path):
-    with open(file_path, 'r') as f:
-        data = json.load(f)
-    return data
+logging.basicConfig(level=logging.INFO)
 
-# Clean Users data
-def clean_users(data):
+def load_json(file_path: str) -> Dict[str, Any]:
+    """
+    Load JSON data from a file.
+
+    Parameters:
+    file_path (str): The path to the JSON file.
+
+    Returns:
+    dict: The loaded JSON data.
+    """
+    try:
+        with open(file_path, 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        logging.error(f"File not found: {file_path}")
+        return None
+    except json.JSONDecodeError:
+        logging.error(f"Error decoding JSON from file: {file_path}")
+        return None
+
+def clean_users(data: Dict[str, Any]) -> pd.DataFrame:
+    """
+    Clean and normalize users data.
+
+    Parameters:
+    data (dict): The raw users data.
+
+    Returns:
+    pd.DataFrame: The cleaned users data.
+    """
     users = pd.json_normalize(data.get('users', []))
-    
-    # Rename columns first
     users.rename(columns={
-        'id': 'user_id', 
-        'firstName': 'first_name', 
+        'id': 'user_id',
+        'firstName': 'first_name',
         'lastName': 'last_name',
         'address.address': 'street',
         'address.city': 'city',
         'address.postalCode': 'postal_code'
     }, inplace=True)
-    
     return users[['user_id', 'first_name', 'last_name', 'gender', 'age', 'street', 'city', 'postal_code']]
 
-# Clean Products data
-def clean_products(data):
+def clean_products(data: Dict[str, Any]) -> pd.DataFrame:
+    """
+    Clean and normalize products data.
+
+    Parameters:
+    data (dict): The raw products data.
+
+    Returns:
+    pd.DataFrame: The cleaned products data.
+    """
     products = pd.json_normalize(data.get('products', []))
-    
-    # Exclude products with price <= 50
     products = products[products['price'] > 50]
-    
-    # Rename columns and select relevant fields
     products.rename(columns={
-        'id': 'product_id', 
+        'id': 'product_id',
         'title': 'name'
     }, inplace=True)
-    
-    # Select and reorder columns
     return products[['product_id', 'name', 'category', 'brand', 'price']]
 
-# Clean Carts data
-def clean_carts(data):
-    # Normalize carts data with nested products
+def clean_carts(data: Dict[str, Any]) -> pd.DataFrame:
+    """
+    Clean and normalize carts data.
+
+    Parameters:
+    data (dict): The raw carts data.
+
+    Returns:
+    pd.DataFrame: The cleaned carts data.
+    """
     carts = pd.json_normalize(
-        data.get('carts', []), 
-        record_path='products', 
-        meta=['id', 'userId'], 
+        data.get('carts', []),
+        record_path='products',
+        meta=['id', 'userId'],
         meta_prefix='cart_'
     )
-    
-    # Rename columns 
     carts.rename(columns={
-        'id': 'product_id', 
+        'id': 'product_id',
         'cart_userId': 'user_id',
         'cart_id': 'cart_id',
         'title': 'product_name'
     }, inplace=True)
-    
-    # Calculate total cart value
     carts['total_cart_value'] = carts.groupby('cart_id')['total'].transform('first')
-    
-    # Select and reorder columns
     return carts[['cart_id', 'user_id', 'product_id', 'product_name', 'quantity', 'price', 'total_cart_value']]
 
-# Save processed data
-def save_data(df, file_path):
+def save_data(df: pd.DataFrame, file_path: str) -> None:
+    """
+    Save a DataFrame to a CSV file.
+
+    Parameters:
+    df (pd.DataFrame): The DataFrame to save.
+    file_path (str): The path to save the CSV file.
+    """
     df.to_csv(file_path, index=False)
+    logging.info(f"Data saved to {file_path}")
 
-# Main function
 def main():
-    # File paths
-    raw_users_file = 'data/raw/users.json'
-    raw_products_file = 'data/raw/products.json'
-    raw_carts_file = 'data/raw/carts.json'
+    raw_users_file = f'{RAW_DIR}/users.json'
+    raw_products_file = f'{RAW_DIR}/products.json'
+    raw_carts_file = f'{RAW_DIR}/carts.json'
 
-    processed_users_file = 'data/processed/users.csv'
-    processed_products_file = 'data/processed/products.csv'
-    processed_carts_file = 'data/processed/carts.csv'
+    processed_users_file = f'{PROCESSED_DIR}/users.csv'
+    processed_products_file = f'{PROCESSED_DIR}/products.csv'
+    processed_carts_file = f'{PROCESSED_DIR}/carts.csv'
 
-    # Load raw data
     users_raw = load_json(raw_users_file)
     products_raw = load_json(raw_products_file)
     carts_raw = load_json(raw_carts_file)
 
-    # Process and clean data
-    users_clean = clean_users(users_raw)
-    products_clean = clean_products(products_raw)
-    carts_clean = clean_carts(carts_raw)
+    if users_raw and products_raw and carts_raw:
+        users_clean = clean_users(users_raw)
+        products_clean = clean_products(products_raw)
+        carts_clean = clean_carts(carts_raw)
 
-    # Save cleaned data
-    save_data(users_clean, processed_users_file)
-    save_data(products_clean, processed_products_file)
-    save_data(carts_clean, processed_carts_file)
+        save_data(users_clean, processed_users_file)
+        save_data(products_clean, processed_products_file)
+        save_data(carts_clean, processed_carts_file)
+    else:
+        logging.error("Failed to load raw data")
 
 if __name__ == '__main__':
     main()
