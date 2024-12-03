@@ -100,7 +100,7 @@ The pipeline consists of the following steps:
 
 ## Scripts Overview
 
-- **`savannah.py`:** Defines the Airflow DAG and tasks.
+- **`savannah_dag.py`:** Defines the Airflow DAG and tasks.
 - **`extract_api_data.py`:** Fetches data from APIs and saves it locally.
 - **`clean_transform_data.py`:** Cleans and normalizes the raw data.
 - **`generate_insights_bq.py`:** Executes SQL queries to generate insights in BigQuery.

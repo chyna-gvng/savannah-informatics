@@ -2,6 +2,7 @@ import os
 from google.cloud import bigquery
 from dotenv import load_dotenv
 import logging
+from config.config import SQL_DIR
 
 logging.basicConfig(level=logging.INFO)
 
@@ -18,7 +19,7 @@ def main():
 
     client = bigquery.Client.from_service_account_json(credentials_path)
 
-    sql_file_path = os.path.join(os.path.dirname(__file__), '../sql/generate_insights.sql')
+    sql_file_path = os.path.join(SQL_DIR, 'generate_insights.sql')
     with open(sql_file_path, 'r') as sql_file:
         queries = sql_file.read().split(';')
 
