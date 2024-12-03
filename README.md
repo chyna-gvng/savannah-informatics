@@ -76,6 +76,7 @@ savannah-informatics/
 3. **Modify Airflow Configuration:**
    - In `.airflow/airflow.cfg`, set the `dags_folder` to the correct path.
    - Set `load_examples` to `False`.
+   - Set `default_timezone` to `system`.
 
 4. **Start Airflow:**
    ```sh
