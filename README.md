@@ -17,7 +17,7 @@ This repository contains the implementation of a data pipeline for Savannah Info
 savannah-informatics/
 │
 ├── dags/
-│   └── savannah.py
+│   └── savannah_dag.py
 ├── scripts/
 │   ├── extract_api_data.py
 │   ├── clean_transform_data.py
@@ -28,6 +28,8 @@ savannah-informatics/
 ├── data/
 │   ├── raw/
 │   └── processed/
+├── config/
+│   └── config.py
 ├── requirements.txt
 └── README.md
 ```
