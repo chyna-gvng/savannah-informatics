@@ -75,20 +75,32 @@ def clean_carts(data: Dict[str, Any]) -> pd.DataFrame:
     Returns:
     pd.DataFrame: The cleaned carts data.
     """
-    carts = pd.json_normalize(
-        data.get('carts', []),
-        record_path='products',
-        meta=['id', 'userId'],
-        meta_prefix='cart_'
-    )
-    carts.rename(columns={
-        'id': 'product_id',
-        'cart_userId': 'user_id',
-        'cart_id': 'cart_id',
-        'title': 'product_name'
-    }, inplace=True)
-    carts['total_cart_value'] = carts.groupby('cart_id')['total'].transform('first')
-    return carts[['cart_id', 'user_id', 'product_id', 'product_name', 'quantity', 'price', 'total_cart_value']]
+    # Create a list to store expanded cart data
+    expanded_carts = []
+
+    for cart in data.get('carts', []):
+        cart_id = cart['id']
+        user_id = cart['userId']
+        total_cart_value = cart['total']
+        
+        for product in cart['products']:
+            expanded_cart_entry = {
+                'cart_id': cart_id,
+                'user_id': user_id,
+                'product_id': product['id'],
+                'product_name': product['title'],
+                'quantity': product['quantity'],
+                'price': product['price'],
+                'total': product['total'],
+                'total_cart_value': total_cart_value
+            }
+            expanded_carts.append(expanded_cart_entry)
+
+    # Convert to DataFrame
+    carts_df = pd.DataFrame(expanded_carts)
+    
+    return carts_df[['cart_id', 'user_id', 'product_id', 'product_name', 
+                     'quantity', 'price', 'total', 'total_cart_value']]
 
 def save_data(df: pd.DataFrame, file_path: str) -> None:
     """
