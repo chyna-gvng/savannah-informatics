@@ -121,7 +121,7 @@ The SQL queries for generating insights are stored in `sql/generate_insights.sql
 
 ## Resources
 
-- [Google Cloud Free Tier](https://cloud.google.com/free)
+- [Google Cloud Platform](https://console.cloud.google.com)
 - [Dummy JSON API](https://dummyjson.com)
 - [BigQuery Documentation](https://cloud.google.com/bigquery/docs)
 - [Apache Airflow Documentation](https://airflow.apache.org/docs/)
