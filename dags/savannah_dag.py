@@ -14,15 +14,15 @@ from scripts.generate_insights_bq import main as run_queries
 
 default_args = {
     'owner': 'airflow',
-    'start_date': datetime(2024, 12, 2),
-    'retries': 1,
+    'start_date': datetime(2024, 12, 1, 0, 0, 0),
+    'retries': 3,
 }
 
 dag = DAG(
     'savannah_dag',
     default_args=default_args,
     description='End-to-end data pipeline',
-    schedule_interval=None,
+    schedule_interval='@daily',
 )
 
 task_extract = PythonOperator(
