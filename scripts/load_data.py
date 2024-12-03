@@ -11,7 +11,7 @@ load_dotenv()
 
 def load_to_bigquery(table_id: str, file_path: str, client: bigquery.Client) -> None:
     """
-    Load a DataFrame from a CSV file into a BigQuery table using WRITE_APPEND.
+    Load a DataFrame from a CSV file into a BigQuery table using WRITE_TRUNCATE.
 
     Parameters:
     table_id (str): The ID of the BigQuery table.
@@ -22,12 +22,13 @@ def load_to_bigquery(table_id: str, file_path: str, client: bigquery.Client) -> 
         # Read the CSV file
         df = pd.read_csv(file_path)
         
-        # Configure the job to append new data
+        # Configure the job to truncate and replace existing data
         job_config = bigquery.LoadJobConfig(
-            write_disposition=bigquery.WriteDisposition.WRITE_APPEND
+            write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE,
+            autodetect=True
         )
         
-        # Load the data, appending to the existing table
+        # Load the data, replacing the existing table
         job = client.load_table_from_dataframe(
             df, table_id, job_config=job_config
         )

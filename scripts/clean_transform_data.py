@@ -47,10 +47,7 @@ def clean_users(data: Dict[str, Any]) -> pd.DataFrame:
         'address.postalCode': 'postal_code'
     }, inplace=True)
     
-    # Add timestamp column
-    users['ingestion_timestamp'] = datetime.now().isoformat()
-    
-    return users[['user_id', 'first_name', 'last_name', 'gender', 'age', 'street', 'city', 'postal_code', 'ingestion_timestamp']]
+    return users[['user_id', 'first_name', 'last_name', 'gender', 'age', 'street', 'city', 'postal_code']]
 
 def clean_products(data: Dict[str, Any]) -> pd.DataFrame:
     """
@@ -69,10 +66,7 @@ def clean_products(data: Dict[str, Any]) -> pd.DataFrame:
         'title': 'name'
     }, inplace=True)
     
-    # Add timestamp column
-    products['ingestion_timestamp'] = datetime.now().isoformat()
-    
-    return products[['product_id', 'name', 'category', 'brand', 'price', 'ingestion_timestamp']]
+    return products[['product_id', 'name', 'category', 'brand', 'price']]
 
 def clean_carts(data: Dict[str, Any]) -> pd.DataFrame:
     """
@@ -86,7 +80,6 @@ def clean_carts(data: Dict[str, Any]) -> pd.DataFrame:
     """
     # Create a list to store expanded cart data
     expanded_carts = []
-    ingestion_timestamp = datetime.now().isoformat()
 
     for cart in data.get('carts', []):
         cart_id = cart['id']
@@ -102,8 +95,7 @@ def clean_carts(data: Dict[str, Any]) -> pd.DataFrame:
                 'quantity': product['quantity'],
                 'price': product['price'],
                 'total': product['total'],
-                'total_cart_value': total_cart_value,
-                'ingestion_timestamp': ingestion_timestamp
+                'total_cart_value': total_cart_value
             }
             expanded_carts.append(expanded_cart_entry)
 
@@ -111,7 +103,7 @@ def clean_carts(data: Dict[str, Any]) -> pd.DataFrame:
     carts_df = pd.DataFrame(expanded_carts)
     
     return carts_df[['cart_id', 'user_id', 'product_id', 'product_name', 
-                     'quantity', 'price', 'total', 'total_cart_value', 'ingestion_timestamp']]
+                     'quantity', 'price', 'total', 'total_cart_value']]
 
 def save_data(df: pd.DataFrame, file_path: str) -> None:
     """
