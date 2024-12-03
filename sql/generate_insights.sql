@@ -3,7 +3,7 @@ CREATE TABLE assessment_dataset.user_summary AS
 SELECT
     u.user_id,
     u.first_name,
-    c.total_cart_value AS total_spent,
+    MAX(c.total_cart_value) AS total_spent,
     SUM(c.quantity) AS total_items,
     u.age,
     u.city
@@ -18,7 +18,7 @@ GROUP BY
 CREATE TABLE assessment_dataset.category_summary AS
 SELECT
     p.category,
-    SUM(c.total_cart_value) AS total_sales,
+    SUM(c.total) AS total_sales,
     SUM(c.quantity) AS total_items_sold
 FROM
     assessment_dataset.carts_table c
