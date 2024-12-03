@@ -14,7 +14,7 @@ def load_to_bigquery(table_id, file_path, client):
 def main():
     # Verify that GOOGLE_APPLICATION_CREDENTIALS is set
     if 'GOOGLE_APPLICATION_CREDENTIALS' not in os.environ:
-        raise ValueError("GOOGLE_APPLICATION_CREDENTIALS not found. Did you forget to set it in your.env file?")
+        raise ValueError("Credentials not set.")
     
     # Use the environment variable for credentials path
     credentials_path = os.environ['GOOGLE_APPLICATION_CREDENTIALS']
