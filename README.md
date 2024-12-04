@@ -36,27 +36,33 @@ savannah-informatics/
 
 ## Environment Setup
 
-1. **Create a Virtual Environment:**
+1. **Clone the repository:**
+   ```sh
+   git clone https://github.com/chyna-gvng/savannah-informatics.git
+   cd savannah-informatics
+   ```
+
+2. **Create a Virtual Environment:**
    ```sh
    python -m venv savannah-env
    ```
 
-2. **Activate the Virtual Environment:**
+3. **Activate the Virtual Environment:**
    ```sh
    source savannah-env/bin/activate
    ```
 
-3. **Set Airflow Home Directory:**
+4. **Set Airflow Home Directory:**
    ```sh
    export AIRFLOW_HOME=$(pwd)/.airflow
    ```
 
-4. **Install Dependencies:**
+5. **Install Dependencies:**
    ```sh
    pip install -r requirements.txt
    ```
 
-5. **Configure Environment Variables:**
+6. **Configure Environment Variables:**
    ```sh
    mv example.env .env
    ```
@@ -116,11 +122,15 @@ The SQL queries for generating insights are stored in `sql/generate_insights.sql
 - **Cart Details:** Provides transaction-level details enriched with user and product data.
 
 ## Assumptions and Trade-offs
+### **Assumptions**  
+- **Operating System**: The pipeline is designed to run on a Linux-based environment.  
+- **API Data Completeness**: The data fetched from APIs is assumed to be complete and correctly structured.  
+- **Pipeline Schedule**: The pipeline is designed to run daily, ensuring up-to-date data processing.
 
-- **Modular Code:** The code is broken down into reusable functions and modules.
-- **Error Handling:** The pipeline includes basic error handling for API failures and missing data.
-- **Scalability:** The workflow is designed to handle larger datasets in the future.
-- **Version Control:** The code is managed using Git.
+### **Trade-offs**  
+- **WRITE_TRUNCATE vs. WRITE_APPEND**:  
+  - The pipeline uses `WRITE_TRUNCATE` mode for BigQuery, replacing table contents on each run.  
+  - This avoids complex deduplication logic but sacrifices the ability to retain historical data.
 
 ## Resources
 
