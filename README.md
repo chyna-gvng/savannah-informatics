@@ -36,7 +36,7 @@ savannah-informatics/
 
 ## Environment Setup
 
-1. **Clone the repository:**
+1. **Clone the Repository:**
    ```sh
    git clone https://github.com/chyna-gvng/savannah-informatics.git
    cd savannah-informatics
